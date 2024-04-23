@@ -2,7 +2,7 @@
 
 - Streamlit app for querying github codebase with RAG
 - App currently handles python scripts
-- App uses Langchain ConversationalRetrievalChain, ChromaDB, OpenAIEmbeddings, and GPT-4
+- App uses Langchain ConversationalRetrievalChain, ChromaDB, OpenAIEmbeddings, GPT-4 and CodeLlama
 
 # To Run
 ```streamlit run app.py```

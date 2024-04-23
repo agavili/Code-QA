@@ -20,8 +20,6 @@ from langchain_openai import ChatOpenAI
 
 
 def load_repo(url):
-    # repo_loc = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(4))
-    # repo = Repo.clone_from(url, to_path=os.path.join('temp_repo/',repo_loc))
     repo = Repo.clone_from(url, to_path='temp_repo/')
     loader = GenericLoader.from_filesystem(
         os.path.join(os.getcwd(), 'temp_repo/'),

@@ -12,6 +12,7 @@ from langchain_openai import ChatOpenAI
 from langchain.agents import initialize_agent, AgentType
 from langchain.callbacks import StreamlitCallbackHandler
 from langchain.chat_models import ChatOpenAI
+from langchain_community.llms import Ollama
 from langchain.tools import DuckDuckGoSearchRun
 
 from rag import upload_docs_db, load_repo, get_document_info
@@ -53,6 +54,7 @@ with st.sidebar:
             st.session_state['github_repo'])
         st.session_state['repo_script_names'], st.session_state['repo_scripts'] = get_document_info(
             st.session_state['documents'])
+        print(st.session_state['openapi_key'])
 
     reset_button_key = "reset_button"
     reset_button = st.button("Reset Chat", key=reset_button_key)
@@ -60,7 +62,7 @@ with st.sidebar:
         del st.session_state["messages"]
         st.experimental_rerun()
 
-st.radio('Model', ["GPT4", "CodeLlama"], horizontal=True)
+model = st.radio('Model', ["GPT4", "CodeLlama"], horizontal=True)
 
 with st.container():
     if "messages" not in st.session_state:
@@ -75,18 +77,17 @@ if prompt := st.chat_input(placeholder="Who won the Women's U.S. Open in 2018?")
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
 
-    if not openai_api_key:
-        st.info("Please add your OpenAI API key to continue.")
-        st.stop()
+    # if not openai_api_key:
+    #     st.info("Please add your OpenAI API key to continue.")
+    #     st.stop()
 
     # llm = ChatOpenAI(model_name="gpt-3.5-turbo", openai_api_key=openai_api_key, streaming=True)
     # search = DuckDuckGoSearchRun(name="Search")
     # search_agent = initialize_agent(
     #     [search], llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, handle_parsing_errors=True
     # )
-
-    llm = ChatOpenAI(model_name="gpt-4",
-                     api_key=st.session_state['openapi_key'])
+    llm = ChatOpenAI(model_name="gpt-4",openai_api_key=st.session_state['openapi_key']) if model == 'GPT4' else Ollama(model="codellama") if model == 'CodeLlama' else None
+    
     memory = ConversationSummaryMemory(
         llm=llm, memory_key="chat_history", return_messages=True
     )
